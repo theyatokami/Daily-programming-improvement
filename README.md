@@ -1,2 +1,2 @@
 # work
-Work codes aimed to help the task handling
+Work done during my three month intership
