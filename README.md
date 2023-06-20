@@ -2,7 +2,7 @@
 
 
 ## 📖 Introduction
-- Leetcode exercises and other small projects ⚙️🔥
+- Leetcode exercises and other small projects ⚙️
 
 ## ✨ Notes
 
