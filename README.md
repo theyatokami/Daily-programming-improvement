@@ -3,7 +3,7 @@
 <div align="center">
 
 🔥🔥 Leetcode exercises and other small projects. 🔥🔥
-
+</div>
 
 ## 📖 Introduction
 
