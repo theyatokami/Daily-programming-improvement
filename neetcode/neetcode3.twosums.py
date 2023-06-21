@@ -1,5 +1,6 @@
+
 class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
+    def twoSum(self, nums, target):
         i=0;
         k=0;
         while i <(len(nums)):
@@ -11,3 +12,7 @@ class Solution:
                 k=k+1;
             i=i+1;
             k=0;
+nums=[1,2,3,4,5,6]
+target=6
+solution=Solution()
+print(solution.twoSum(nums,target))  # Output: True

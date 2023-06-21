@@ -1,4 +1,3 @@
- s = "anagram", t = "nagaram"
 
 class Solution:
     def isAnagram(self, s: str, t: str) -> bool:
@@ -11,3 +10,7 @@ class Solution:
             countS[s[i]] = 1 + countS.get(s[i], 0)
             countT[t[i]] = 1 + countT.get(t[i], 0)
         return countS == countT
+s = "anagram"
+t = "nagaram"
+solution = Solution()
+print(solution.isAnagram(s, t))  # Output: True
