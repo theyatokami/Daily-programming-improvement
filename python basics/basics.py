@@ -9,14 +9,14 @@ else:
     print("You are a minor.")
 
 #if elif else and
-temperature = input("temperature: ")
-temperature=int(temperature)
-if temperature < 0:
-    print("It's freezing!")
-elif temperature >= 0 and temperature <= 25:
-    print("It's a pleasant day.")
+country = input("Country: ")
+
+if country == "france":
+    print("ok")
+elif country != "france" and age <= 18:
+    print("Go home little kid")
 else:
-    print("It's hot outside!")
+    print("Go home my friend")
 
 #list and for loop
 fruits = ["apple", "banana", "cherry"]
@@ -35,15 +35,15 @@ while count < 5:
 #functions
 def greet(name):
     print("Hello, " + name + "!")
-
-greet(input("What is your name: "))
+name=input("What is your name: ")
+greet(name)
 
 #Tuples: similar to lists but are immutable
-person = ("John", 25, "USA")
+person = (name, age, country)
 print(person)
 
 #dictionary
-person = {"name": "John", "age": 25, "country": "USA"}
+person = {"name": name, "age": age, "country": country}
 print(person["name"])  # Output: "John"
 
 # Sets are unordered collections of unique elements.
