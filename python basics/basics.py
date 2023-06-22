@@ -3,7 +3,8 @@ print("Hello, World!")
 
 #if else
 age =input("your age: ")
-if int(age) >= 18:
+age=int(age)
+if age >= 18:
     print("You are an adult.")
 else:
     print("You are a minor.")
@@ -49,20 +50,27 @@ print(person["name"])  # Output: "John"
 # Sets are unordered collections of unique elements.
 numbers = {1, 2, 3, 4, 5}
 
+#files (try except)
 if (input("open file?: ")=='yes'):
-    #READ
-    file = open("file1.txt", "r")
-    content = file.read()
-    print(content)
-    file.close()
-    #OVERWRITE
-    file = open("filename.txt", "w")  # Open file in write mode
-    file.write("I overwrote this file")
-    file.close()
-    #ADD
-    file = open("filename.txt", "a")  # Open file in append mode
-    file.write("this content was appended")
-    file.close()
+    try:
+        #READ
+        file = open("file1.txt", "r")
+        content = file.read()
+        print(content)
+        file.close()
+        #OVERWRITE
+        file = open("filename.txt", "w")  # Open file in write mode
+        file.write("I overwrote this file")
+        file.close()
+        #ADD
+        file = open("filename.txt", "a")  # Open file in append mode
+        file.write("this content was appended")
+        file.close()
+    except FileNotFoundError:
+        print("File not found!")
+#modules
+import modules.my_module1
+modules.my_module1.attack(name)
 
 
 
