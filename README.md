@@ -10,3 +10,5 @@
 - python basics sums up the most basics python scripts
 ## 📅 Logs
 - Started mid-June 
+
+![image](https://github.com/theyatokami/Daily-programming-improvement/assets/97450008/912f7506-38b8-4367-8c44-bbfc5967ac79)
