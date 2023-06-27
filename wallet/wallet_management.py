@@ -8,12 +8,19 @@ import os
 default_daily_spending = 7
 default_saving_goal = 700
 balance_history_file = "balance_history.csv"
+user_inputs_file = "user_inputs.csv"
 
 # Initialize balance history
 if os.path.exists(balance_history_file):
     balance_history = pd.read_csv(balance_history_file)
 else:
     balance_history = pd.DataFrame(columns=["Date", "Remaining Balance"])
+
+# Load user inputs
+user_inputs = {}
+if os.path.exists(user_inputs_file):
+    user_inputs_df = pd.read_csv(user_inputs_file, index_col=0)
+    user_inputs = user_inputs_df.iloc[0].to_dict()
 
 def calculate_remaining_balance(current_money, daily_spending, current_day, total_days):
     # Calculate the remaining money after subtracting the daily spending for the rest of the month
@@ -31,9 +38,9 @@ def calculate_money_evolution(current_money, daily_spending, current_day, total_
 st.title('Money Management System')
 
 # User inputs
-current_money = st.number_input("Enter your current total money:")
-daily_spending = st.number_input("Enter your daily spending:", value=default_daily_spending)
-saving_goal = st.number_input("Enter your saving goal:", value=default_saving_goal)
+current_money = st.number_input("Enter your current total money:", value=user_inputs.get("current_money", 0))
+daily_spending = st.number_input("Enter your daily spending:", value=user_inputs.get("daily_spending", default_daily_spending))
+saving_goal = st.number_input("Enter your saving goal:", value=user_inputs.get("saving_goal", default_saving_goal))
 
 # Get today's date
 now = datetime.now()
@@ -47,8 +54,17 @@ remaining_balance = None  # Default value for remaining_balance
 # If the user has clicked the "Submit" button
 if st.button('Submit'):
     remaining_balance = calculate_remaining_balance(current_money, daily_spending, current_day, total_days)
-    balance_history = balance_history.append({"Date": now.strftime("%Y-%m-%d"), "Remaining Balance": remaining_balance}, ignore_index=True)
+    new_row = pd.DataFrame({"Date": [now.strftime("%Y-%m-%d")], "Remaining Balance": [remaining_balance]})
+    balance_history = pd.concat([balance_history, new_row], ignore_index=True)
     balance_history.to_csv(balance_history_file, index=False)
+
+    # Save user inputs
+    user_inputs_df = pd.DataFrame({
+        "current_money": [current_money],
+        "daily_spending": [daily_spending],
+        "saving_goal": [saving_goal]
+    })
+    user_inputs_df.to_csv(user_inputs_file)
 
     # Display pile of money
     money_bags = "💰" * int(remaining_balance / 100)  # One money bag emoji for each 100 euros
@@ -68,6 +84,11 @@ if st.button('Reset'):
     saving_goal = default_saving_goal
     balance_history = pd.DataFrame(columns=["Date", "Remaining Balance"])
     balance_history.to_csv(balance_history_file, index=False)
+
+    # Reset user inputs
+    user_inputs = {}
+    user_inputs_df = pd.DataFrame(columns=["current_money", "daily_spending", "saving_goal"])
+    user_inputs_df.to_csv(user_inputs_file)
 
 if remaining_balance is not None:
     st.write(f"Your predicted remaining balance at the end of the month is: €{remaining_balance:.2f}")
