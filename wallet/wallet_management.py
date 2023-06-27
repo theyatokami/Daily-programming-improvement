@@ -2,38 +2,38 @@ import streamlit as st
 from datetime import datetime
 import pandas as pd
 import numpy as np
+import os
 
-# Define your fixed monthly values
-phone_bill = 38
-miscellaneous = 20
-lunch_expense_per_day = 7
-saving_goal = 700
+# Default values
+default_daily_spending = 7
+default_saving_goal = 700
+balance_history_file = "balance_history.csv"
 
-def calculate_remaining_balance(current_money, current_day, total_days):
-    # Calculate the remaining money after subtracting the fixed monthly expenses and saving goal
-    remaining_money = current_money - saving_goal
+# Initialize balance history
+if os.path.exists(balance_history_file):
+    balance_history = pd.read_csv(balance_history_file)
+else:
+    balance_history = pd.DataFrame(columns=["Date", "Remaining Balance"])
 
-    # Total spending for the rest of the month
-    total_spending_rest_of_month = lunch_expense_per_day * (total_days - current_day + 1)
+def calculate_remaining_balance(current_money, daily_spending, current_day, total_days):
+    # Calculate the remaining money after subtracting the daily spending for the rest of the month
+    remaining_money = current_money - daily_spending * (total_days - current_day + 1)
+    return remaining_money
 
-    # Remaining balance at the end of the month after spending for the rest of the month
-    remaining_balance = remaining_money - total_spending_rest_of_month
-
-    return remaining_balance
-
-def calculate_money_evolution(current_money, current_day, total_days):
+def calculate_money_evolution(current_money, daily_spending, current_day, total_days):
     remaining_balances = []
     for day in range(current_day, total_days+1):
-        remaining_balance = calculate_remaining_balance(current_money, day, total_days)
+        remaining_balance = current_money
         remaining_balances.append(remaining_balance)
-        current_money -= (lunch_expense_per_day + remaining_balance / (total_days - day + 1))
-
+        current_money -= daily_spending
     return pd.DataFrame({"Day": np.arange(current_day, total_days+1), "Remaining Balance": remaining_balances})
 
 st.title('Money Management System')
 
-# User inputs the current money left
+# User inputs
 current_money = st.number_input("Enter your current total money:")
+daily_spending = st.number_input("Enter your daily spending:", value=default_daily_spending)
+saving_goal = st.number_input("Enter your saving goal:", value=default_saving_goal)
 
 # Get today's date
 now = datetime.now()
@@ -44,16 +44,31 @@ total_days = 30
 
 remaining_balance = None  # Default value for remaining_balance
 
+# If the user has clicked the "Submit" button
 if st.button('Submit'):
-    remaining_balance = calculate_remaining_balance(current_money, current_day, total_days)
+    remaining_balance = calculate_remaining_balance(current_money, daily_spending, current_day, total_days)
+    balance_history = balance_history.append({"Date": now.strftime("%Y-%m-%d"), "Remaining Balance": remaining_balance}, ignore_index=True)
+    balance_history.to_csv(balance_history_file, index=False)
 
     # Display pile of money
     money_bags = "💰" * int(remaining_balance / 100)  # One money bag emoji for each 100 euros
     st.write(money_bags)
 
     # Display money evolution chart
-    money_evolution_df = calculate_money_evolution(current_money, current_day, total_days)
+    money_evolution_df = calculate_money_evolution(current_money, daily_spending, current_day, total_days)
     st.line_chart(money_evolution_df.set_index("Day"))
+
+    # Display balance history chart
+    st.line_chart(balance_history.set_index("Date"))
+
+# If the user has clicked the "Reset" button
+if st.button('Reset'):
+    current_money = 0
+    daily_spending = default_daily_spending
+    saving_goal = default_saving_goal
+    balance_history = pd.DataFrame(columns=["Date", "Remaining Balance"])
+    balance_history.to_csv(balance_history_file, index=False)
 
 if remaining_balance is not None:
     st.write(f"Your predicted remaining balance at the end of the month is: €{remaining_balance:.2f}")
+    st.write(f"Your predicted disposable income at the end of the month is: €{(remaining_balance-saving_goal):.2f}")
